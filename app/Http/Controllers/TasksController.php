@@ -19,9 +19,11 @@ class TasksController extends Controller
                 $validator = Validator::make(json_decode($data, true), [
                     'name' => 'required|string',
                     'date_start' => 'sometimes|numeric',
+                    'date_handover' => 'sometimes|numeric',
                     'description' => 'sometimes|string',
                     'subject_id' => 'sometimes|int|exists:subjects,id',
                     'subtasks' => 'sometimes|array',
+                    'completed' => 'sometimes|boolean',
                 ]);
 
                 if (!$validator->fails()) {
@@ -31,6 +33,8 @@ class TasksController extends Controller
                     $task->name = $data->name;
                     if(isset($data->date_start)) $task->date_start = $data->date_start;
                     if(isset($data->description)) $task->description = $data->description;
+                    if(isset($data->completed)) $task->completed = $data->completed;
+                    if(isset($data->date_handover)) $task->date_handover = $data->date_handover;
                     $task->student_id = $request->student->id;
 
                     if(isset($data->subject_id)) {
@@ -55,6 +59,7 @@ class TasksController extends Controller
                     }
 
                     $response['id'] = $task->id;
+                    $response['response'] = $data;
                     $http_status_code = 201;
                 } else {
                     $response['response'] = $validator->errors()->first();
